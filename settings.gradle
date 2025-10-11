@@ -1,0 +1,7 @@
+rootProject.name = 'minusone-server'
+
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+    }
+}
