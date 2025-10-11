@@ -8,4 +8,4 @@ data class AdminSongDto(
     val fee: Int = 0
 )
 
-fun com.github.bumblebee202111.minusone.server.entity.Song.toAdminSongDto() = AdminSongDto(id = id, name = name)
+fun Song.toAdminSongDto() = AdminSongDto(id = id, name = name)

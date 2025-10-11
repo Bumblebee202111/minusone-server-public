@@ -13,7 +13,7 @@ class ProfileService(
     private val log = LoggerFactory.getLogger(ProfileService::class.java)
 
     @Transactional(readOnly = true)
-    fun findByAccountId(accountId: Long): com.github.bumblebee202111.minusone.server.entity.Profile? {
+    fun findByAccountId(accountId: Long): Profile? {
         val profile = profileRepository.findById(accountId).orElse(null)
         if (profile == null) {
             log.warn("No profile found for accountId: {}", accountId)

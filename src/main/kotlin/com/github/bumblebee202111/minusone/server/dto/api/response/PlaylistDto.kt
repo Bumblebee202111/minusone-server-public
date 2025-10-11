@@ -10,7 +10,7 @@ data class PlaylistDto(
     val trackIds: List<TrackIdDto>
 )
 
-fun com.github.bumblebee202111.minusone.server.entity.Playlist.toDto(songDtos: List<SongDto>, trackIds: List<TrackIdDto>): PlaylistDto {
+fun Playlist.toDto(songDtos: List<SongDto>, trackIds: List<TrackIdDto>): PlaylistDto {
     return PlaylistDto(id = id, name = name, userId = userId, tracks = songDtos, trackIds = trackIds)
 }
 

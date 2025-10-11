@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface SongRepository:JpaRepository<com.github.bumblebee202111.minusone.server.entity.Song,Long> {
-    fun findAllByIdIn(ids: Collection<Long>): List<com.github.bumblebee202111.minusone.server.entity.Song>
+interface SongRepository:JpaRepository<Song,Long> {
+    fun findAllByIdIn(ids: Collection<Long>): List<Song>
 }

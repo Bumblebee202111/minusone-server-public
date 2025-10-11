@@ -61,8 +61,6 @@ class EapiDecryptFilter(
             validateRequestPath(request, decryptedApiPath)
             validateSignature(decryptedApiPath, paramsJson, clientDigest)
 
-
-
             val paramsMap = parseAndProcessParams(paramsJson)
             val encryptResponse = paramsMap[E_R_PARAM] as? Boolean ?: false
 
@@ -73,7 +71,7 @@ class EapiDecryptFilter(
                 .filterKeys { it != E_R_PARAM }
                 .entries
                 .joinToString("&") { (key, value) ->
-                    val valueString = if (value is String) value else objectMapper.writeValueAsString(value)
+                    val valueString = value as? String ?: objectMapper.writeValueAsString(value)
                     "${encodeURL(key)}=${encodeURL(valueString)}"
                 }
 

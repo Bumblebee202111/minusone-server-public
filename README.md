@@ -19,6 +19,7 @@ The name, **减一 (MinusOne)**, reflects this "less-is-more" approach: focusing
 
 ## Key Design Patterns Practiced
 
+*   **Dual API Domains:** The project is intentionally split into two distinct domains. The **Public API** (/api, /eapi) focuses on mimicking the conventions of the original NCM client. In contrast, the **Admin API** (/admin) is a completely custom design, serving as a playground to implement modern RESTful best practices, not limited by the conventions of the client API.
 *   **Layered Architecture:** A clear separation between `Controller`, `Service`, and `Repository` layers.
 *   **DTOs & Mappers:** Using DTOs and Kotlin extension functions to keep the API layer separate from database entities.
 *   **Centralized Error Handling:** Using `@RestControllerAdvice` to create consistent JSON error responses from custom exceptions.

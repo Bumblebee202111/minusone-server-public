@@ -8,7 +8,7 @@ data class AdminAccountDto(
     val phone: String,
 )
 
-fun com.github.bumblebee202111.minusone.server.entity.Account.toAdminAccountDto(): AdminAccountDto = AdminAccountDto(
+fun Account.toAdminAccountDto(): AdminAccountDto = AdminAccountDto(
     id = id, userName = userName, phone = phone
 )
 

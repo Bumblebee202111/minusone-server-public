@@ -22,8 +22,8 @@ data class AdminAccountCreateRequest(
     val password: String
 )
 
-fun AdminAccountCreateRequest.toAccountEntity(): com.github.bumblebee202111.minusone.server.entity.Account {
-    return com.github.bumblebee202111.minusone.server.entity.Account(
+fun AdminAccountCreateRequest.toAccountEntity(): Account {
+    return Account(
         phone = this.phone,
         userName = "1_${this.phone}",
         password = this.password,
@@ -31,8 +31,8 @@ fun AdminAccountCreateRequest.toAccountEntity(): com.github.bumblebee202111.minu
     )
 }
 
-fun AdminAccountCreateRequest.toProfileEntity(associatedAccount: com.github.bumblebee202111.minusone.server.entity.Account): com.github.bumblebee202111.minusone.server.entity.Profile {
-    return com.github.bumblebee202111.minusone.server.entity.Profile(
+fun AdminAccountCreateRequest.toProfileEntity(associatedAccount: Account): com.github.bumblebee202111.minusone.server.entity.Profile {
+    return Profile(
         account = associatedAccount,
         nickname = this.nickname
     )

@@ -9,7 +9,7 @@ data class AdminAccountUpdateRequest(
     val password: String
 )
 
-fun AdminAccountUpdateRequest.updateEntity(account: com.github.bumblebee202111.minusone.server.entity.Account): com.github.bumblebee202111.minusone.server.entity.Account {
+fun AdminAccountUpdateRequest.updateEntity(account: Account): Account {
     return account.apply {
         this.password = CryptoUtil.md5(this@updateEntity.password)
     }

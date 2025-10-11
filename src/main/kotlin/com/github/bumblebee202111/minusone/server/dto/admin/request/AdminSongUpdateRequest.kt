@@ -9,13 +9,13 @@ data class AdminSongUpdateRequest(
     val name: String?,
     @Size(min = 1, message = "File path cannot be empty if provided")
     val filePath: String?,
-    val h: com.github.bumblebee202111.minusone.server.entity.AudioDetail?,
-    val m: com.github.bumblebee202111.minusone.server.entity.AudioDetail?,
-    val l: com.github.bumblebee202111.minusone.server.entity.AudioDetail?,
-    val sq: com.github.bumblebee202111.minusone.server.entity.AudioDetail?
+    val h: AudioDetail?,
+    val m: AudioDetail?,
+    val l: AudioDetail?,
+    val sq: AudioDetail?
 )
 
-fun AdminSongUpdateRequest.updateEntity(song: com.github.bumblebee202111.minusone.server.entity.Song): com.github.bumblebee202111.minusone.server.entity.Song {
+fun AdminSongUpdateRequest.updateEntity(song: Song): Song {
     return song.apply {
         this@updateEntity.name?.let { newName ->
             this.name = newName

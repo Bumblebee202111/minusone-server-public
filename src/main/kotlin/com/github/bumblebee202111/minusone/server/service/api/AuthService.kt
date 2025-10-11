@@ -3,6 +3,10 @@ package com.github.bumblebee202111.minusone.server.service.api
 import com.github.bumblebee202111.minusone.server.dto.api.internal.CellphoneLoginRequest
 import com.github.bumblebee202111.minusone.server.dto.api.internal.RegisterRequest
 import com.github.bumblebee202111.minusone.server.dto.api.response.PhoneAccountInfoDto
+import com.github.bumblebee202111.minusone.server.entity.Account
+import com.github.bumblebee202111.minusone.server.entity.AnonimousUser
+import com.github.bumblebee202111.minusone.server.entity.Profile
+import com.github.bumblebee202111.minusone.server.entity.RegisterAnonimousResult
 import com.github.bumblebee202111.minusone.server.exception.api.LoginCellphoneNotRegisteredException
 import com.github.bumblebee202111.minusone.server.exception.api.LoginWrongIdOrPasswordException
 import com.github.bumblebee202111.minusone.server.exception.api.PhoneOrUserAlreadyRegisteredException
@@ -43,7 +47,7 @@ class AuthService(
 
 
     @Transactional
-    fun issueTokenForAccount(account: com.github.bumblebee202111.minusone.server.entity.Account): String {
+    fun issueTokenForAccount(account: Account): String {
         val tokenValue = generateToken()
         val now = Instant.now()
         val expiresAt = now.plusSeconds(tokenValidityDurationSeconds)
@@ -60,7 +64,7 @@ class AuthService(
     }
 
     @Transactional(readOnly = true)
-    fun validateTokenAndGetAccount(token: String): com.github.bumblebee202111.minusone.server.entity.Account? {
+    fun validateTokenAndGetAccount(token: String): Account? {
         if (token.isBlank()) return null
 
         val authToken: com.github.bumblebee202111.minusone.server.entity.AuthToken? = authTokenRepository.findByTokenAndExpiresAtAfter(token, Instant.now())
@@ -84,22 +88,22 @@ class AuthService(
         log.info("Finished cleanup: {} expired auth tokens deleted.", deletedCount)
     }
 
-    fun registerAnonimously(username: String): com.github.bumblebee202111.minusone.server.entity.RegisterAnonimousResult {
+    fun registerAnonimously(username: String): RegisterAnonimousResult {
 
         val user = anonimousUserRepository.save(
-            com.github.bumblebee202111.minusone.server.entity.AnonimousUser(
+            AnonimousUser(
                 userId = Random.nextLong(100000000, 9999999999),
                 createTime = System.currentTimeMillis()
             )
         )
-        return com.github.bumblebee202111.minusone.server.entity.RegisterAnonimousResult(
+        return RegisterAnonimousResult(
             userId = user.userId,
             createTime = user.createTime
         )
     }
 
     @Transactional
-    fun cellphoneLogin(request: CellphoneLoginRequest): Pair<com.github.bumblebee202111.minusone.server.entity.Account, String> {
+    fun cellphoneLogin(request: CellphoneLoginRequest): Pair<Account, String> {
 
         val userName = "1_${request.phone}"
 
@@ -115,7 +119,7 @@ class AuthService(
     @Transactional
     fun registerByCellphone(
         registerRequest: RegisterRequest
-    ): Pair<com.github.bumblebee202111.minusone.server.entity.Account, String> {
+    ): Pair<Account, String> {
         val phone = registerRequest.phone
         val userName = "1_$phone"
 
@@ -123,7 +127,7 @@ class AuthService(
             log.warn("Registration failed: Phone {} or username {} already exists.", phone, userName)
             throw PhoneOrUserAlreadyRegisteredException("该手机号已注册")
         }
-        val newAccount = com.github.bumblebee202111.minusone.server.entity.Account(
+        val newAccount = Account(
             userName = userName,
             phone = phone,
             password = registerRequest.password
@@ -131,7 +135,7 @@ class AuthService(
         val savedAccount = accountRepository.save(newAccount)
         log.info("New account registered: userName {}, ID {}", savedAccount.userName, savedAccount.id)
 
-        val newProfile = com.github.bumblebee202111.minusone.server.entity.Profile(
+        val newProfile = Profile(
             account = savedAccount,
             nickname = registerRequest.nickname
         )

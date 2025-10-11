@@ -9,7 +9,7 @@ data class AdminProfileDto(
     val backgroundUrl: String?
 )
 
-fun com.github.bumblebee202111.minusone.server.entity.Profile.toAdminProfileDto()= AdminProfileDto(
+fun Profile.toAdminProfileDto()= AdminProfileDto(
     userId = userId,
     nickname = nickname,
     avatarUrl = avatarUrl,

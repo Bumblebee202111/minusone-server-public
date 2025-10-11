@@ -8,7 +8,7 @@ data class AdminSongCreateRequest(
     val name: String
 )
 
-fun AdminSongCreateRequest.toEntity(): com.github.bumblebee202111.minusone.server.entity.Song =
-    com.github.bumblebee202111.minusone.server.entity.Song(
+fun AdminSongCreateRequest.toEntity(): Song =
+    Song(
         name = name
     )
