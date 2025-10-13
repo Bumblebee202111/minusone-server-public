@@ -1,4 +1,4 @@
-package com.github.bumblebee202111.minusone.server.exception.api.handler
+package com.github.bumblebee202111.minusone.server.advice.api
 
 import com.github.bumblebee202111.minusone.server.constant.api.ApiCodes
 import com.github.bumblebee202111.minusone.server.constant.api.ApiErrorMessages
@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 
 @RestControllerAdvice(basePackages = ["com.github.bumblebee202111.minusone.server.controller.api"])
-class GlobalApiExceptionHandler {
+class ApiGlobalExceptionHandler {
 
-    private val log = LoggerFactory.getLogger(GlobalApiExceptionHandler::class.java)
+    private val log = LoggerFactory.getLogger(ApiGlobalExceptionHandler::class.java)
 
     @ExceptionHandler(ApiException::class)
     fun handleApiException(ex: ApiException): ResponseEntity<ApiResponse> {

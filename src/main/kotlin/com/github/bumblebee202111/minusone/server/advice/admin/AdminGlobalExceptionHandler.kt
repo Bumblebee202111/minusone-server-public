@@ -1,4 +1,4 @@
-package com.github.bumblebee202111.minusone.server.exception.admin.handler
+package com.github.bumblebee202111.minusone.server.advice.admin
 
 import com.github.bumblebee202111.minusone.server.dto.admin.response.AdminErrorResponse
 import com.github.bumblebee202111.minusone.server.exception.admin.DataConflictException

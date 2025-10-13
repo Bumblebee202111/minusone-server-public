@@ -3,6 +3,7 @@ package com.github.bumblebee202111.minusone.server.filter
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.bumblebee202111.minusone.server.dto.api.response.ApiResponse
+import com.github.bumblebee202111.minusone.server.exception.api.WrrongParamException
 import com.github.bumblebee202111.minusone.server.util.CryptoUtil
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
@@ -12,11 +13,13 @@ import org.slf4j.LoggerFactory
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
+import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.*
+import java.util.zip.GZIPOutputStream
 
 @Component
 @Order(1)
@@ -34,8 +37,6 @@ class EapiDecryptFilter(
         private const val MD5_DIGEST_INFIX = "***"
         private const val MD5_DIGEST_SUFFIX = "*************"
         private const val E_R_PARAM = "e_r"
-        private const val DEFAULT_ERROR_MESSAGE = "参数错误"
-        private const val DEFAULT_ERROR_CODE = 400
 
     }
 
@@ -48,25 +49,26 @@ class EapiDecryptFilter(
             chain.doFilter(request, response)
             return
         }
-        val encryptedBase64Params = request.getParameter("params")
-        if (encryptedBase64Params.isNullOrBlank()) {
-            log.warn("EAPI request to ${request.requestURI} without 'params' field.")
-            sendErrorResponse(response)
-            return
-        }
+
         try {
-            val decryptedData = CryptoUtil.aesEcbDecryptFromBase64(encryptedBase64Params, EAPI_AES_KEY)
-            val (decryptedApiPath, paramsJson, clientDigest) = parseDecryptedData(decryptedData)
+            val encryptedParams = request.getParameter("params")
+                ?: throw WrrongParamException() 
+
+            val decryptedData = CryptoUtil.aesEcbDecryptFromBase64(encryptedParams, EAPI_AES_KEY)
+
+            val parts = decryptedData.split(MAGIC_SEPARATOR)
+            if (parts.size != 3) throw WrrongParamException()
+
+            val (decryptedApiPath, paramsJson, clientDigest) = parts.let {
+                Triple(URLDecoder.decode(it[0], StandardCharsets.UTF_8.name()), it[1], it[2])
+            }
 
             validateRequestPath(request, decryptedApiPath)
             validateSignature(decryptedApiPath, paramsJson, clientDigest)
 
             val paramsMap = parseAndProcessParams(paramsJson)
-            val encryptResponse = paramsMap[E_R_PARAM] as? Boolean ?: false
+            request.setAttribute("EAPI_ENCRYPT_RESPONSE", paramsMap[E_R_PARAM] as? Boolean ?: false)
 
-            request.setAttribute("EAPI_ENCRYPT_RESPONSE", encryptResponse)
-
-            val targetApiPath = decryptedApiPath
             val queryParamsString = paramsMap
                 .filterKeys { it != E_R_PARAM }
                 .entries
@@ -75,69 +77,71 @@ class EapiDecryptFilter(
                     "${encodeURL(key)}=${encodeURL(valueString)}"
                 }
 
-            val wrappedRequest = createForwardableRequest(request, targetApiPath, queryParamsString)
-            log.debug("Forwarding EAPI request from ${request.requestURI} to GET $targetApiPath?$queryParamsString")
-            request.getRequestDispatcher(targetApiPath).forward(wrappedRequest, response)
-        } catch (e: EapiValidationException) {
-            log.warn("EAPI validation failed for ${request.requestURI}: ${e.message}")
-            sendErrorResponse(response)
+            val wrappedRequest = createForwardableRequest(request, decryptedApiPath, queryParamsString)
+            request.getRequestDispatcher(decryptedApiPath).forward(wrappedRequest, response)
+
         } catch (e: Exception) {
-            log.error("Unexpected error during EAPI processing for ${request.requestURI}: ${e.message}", e)
-            sendErrorResponse(response, "EAPI processing failed internally")
+            log.warn("EAPI processing failed for [{}]: {}", request.requestURI, e.message)
+            sendEapiErrorResponse(request, response)
         }
     }
 
-    private fun parseDecryptedData(decryptedData: String): Triple<String, String, String> {
-        val parts = decryptedData.split(MAGIC_SEPARATOR)
-        if (parts.size != 3) {
-            throw EapiValidationException("Invalid EAPI decrypted data format (parts count: ${parts.size})")
-        }
-        return try {
-            Triple(URLDecoder.decode(parts[0], StandardCharsets.UTF_8.name()), parts[1], parts[2])
-        } catch (e: Exception) {
-            throw EapiValidationException("Failed to URL decode decrypted path", e)
+    private fun sendEapiErrorResponse(request: HttpServletRequest, response: HttpServletResponse) {
+        try {
+            val exception = WrrongParamException()
+            val apiResponse = ApiResponse.error(exception.code, exception.message)
+            val jsonString = objectMapper.writeValueAsString(apiResponse)
+            val responseBytes = jsonString.toByteArray(Charsets.UTF_8)
+
+            if ("true" == request.getHeader("x-aeapi")) {
+                val byteArrayOutputStream = ByteArrayOutputStream()
+                GZIPOutputStream(byteArrayOutputStream).use { it.write(responseBytes) }
+                val gzippedBytes = byteArrayOutputStream.toByteArray()
+
+                response.status = HttpServletResponse.SC_OK
+                response.contentType = "application/json;charset=UTF-8"
+                response.setContentLength(gzippedBytes.size)
+                response.outputStream.write(gzippedBytes)
+            } else {
+                response.status = HttpServletResponse.SC_OK
+                response.contentType = "application/json;charset=UTF-8"
+                response.setContentLength(responseBytes.size)
+                response.writer.write(jsonString)
+            }
+        } catch (e: IOException) {
+            log.error("Failed to write EAPI error response", e)
         }
     }
 
     private fun validateRequestPath(request: HttpServletRequest, decryptedApiPath: String) {
-        val actualEapiPathSuffix = request.requestURI.substringAfter(EAPI_PATH_PREFIX, "")
-        val expectedApiPathSuffix = decryptedApiPath.substringAfter(API_PATH_PREFIX, "")
-
-        if (actualEapiPathSuffix != expectedApiPathSuffix) {
-            throw EapiValidationException(
-                "EAPI path mismatch: Request URI suffix '${actualEapiPathSuffix}' " +
-                        "differs from decrypted API path suffix '${expectedApiPathSuffix}'."
-            )
+        val actualSuffix = request.requestURI.substringAfter(EAPI_PATH_PREFIX, "")
+        val expectedSuffix = decryptedApiPath.substringAfter(API_PATH_PREFIX, "")
+        if (actualSuffix != expectedSuffix) {
+            throw WrrongParamException()
         }
     }
+
 
     private fun validateSignature(decryptedApiPath: String, paramsJson: String, clientDigest: String) {
         val md5Input = "$MD5_DIGEST_PREFIX${decryptedApiPath}$MD5_DIGEST_INFIX$paramsJson$MD5_DIGEST_SUFFIX"
         val serverDigest = CryptoUtil.md5(md5Input)
         if (serverDigest != clientDigest) {
-            throw EapiValidationException("Signature mismatch. Client: $clientDigest, Server: $serverDigest. Input: $md5Input")
+            throw WrrongParamException()
         }
     }
 
     private fun parseAndProcessParams(paramsJson: String): Map<String, Any> {
-        try {
-            val params = objectMapper.readValue(paramsJson, object : TypeReference<Map<String, Any>>() {})
-                .toMutableMap()
-
-            params[E_R_PARAM]?.let { eRValue ->
-                params[E_R_PARAM] = when (eRValue) {
-                    is Boolean -> eRValue
-                    "true" -> true
-                    "false" -> false
-                    else -> throw EapiValidationException("Invalid value for 'e_r' parameter: $eRValue")
-                }
+        val params = objectMapper.readValue(paramsJson, object : TypeReference<Map<String, Any>>() {})
+            .toMutableMap()
+        params[E_R_PARAM]?.let {
+            params[E_R_PARAM] = when (it) {
+                is Boolean -> it
+                "true" -> true
+                "false" -> false
+                else -> throw WrrongParamException()
             }
-            return params
-        } catch (e: EapiValidationException) {
-            throw e
-        } catch (e: Exception) {
-            throw EapiValidationException("Failed to parse EAPI parameters JSON: ${e.message}", e)
         }
+        return params
     }
 
     private fun createForwardableRequest(
@@ -160,12 +164,15 @@ class EapiDecryptFilter(
                             if (parts.size == 2) {
                                 URLDecoder.decode(parts[0], StandardCharsets.UTF_8.name()) to
                                         arrayOf(URLDecoder.decode(parts[1], StandardCharsets.UTF_8.name()))
-                            } else { null }
+                            } else {
+                                null
+                            }
                         }
                         .groupBy({ it.first }, { it.second.first() })
                         .mapValues { it.value.toTypedArray() }
                 }
             }
+
             override fun getParameter(name: String): String? = parsedQueryParams[name]?.firstOrNull()
             override fun getParameterValues(name: String): Array<String>? = parsedQueryParams[name]
             override fun getParameterMap(): Map<String, Array<String>> = parsedQueryParams
@@ -173,21 +180,6 @@ class EapiDecryptFilter(
         }
     }
 
-    private fun sendErrorResponse(response: HttpServletResponse, logHint: String? = null)  {
-        if (logHint != null) {
-            log.warn("Sending default EAPI error. Server-side hint: $logHint")
-        }
-        try {
-            val apiResponse = ApiResponse.error(DEFAULT_ERROR_CODE, DEFAULT_ERROR_MESSAGE)
-            response.status = HttpServletResponse.SC_OK
-            response.contentType = "application/json;charset=UTF-8"
-            response.writer.write(objectMapper.writeValueAsString(apiResponse))
-        } catch (e: IOException) {
-            log.error("Failed to write default error response: ${e.message}", e)
-        }
-    }
-
     private fun encodeURL(str: String) = URLEncoder.encode(str, "UTF-8")
 
-    private class EapiValidationException(message: String, cause: Throwable? = null) : RuntimeException(message, cause)
 }
