@@ -29,8 +29,8 @@ The name, **减一 (MinusOne)**, reflects a "less-is-more" approach: focusing on
 ### Public API (/api, /eapi)
 
 *   `AuthController`: Handles authentication and registration.
-*   `MusicController`: Fetches public music data (songs, playlists) and handles user actions (e.g., /song/like).
-*   `UserController`: Fetches user-specific data (e.g., /album/sublist).
+*   `MusicController`: Fetches public music data (songs, playlists) and handles user actions (e.g., `/song/like`).
+*   `UserController`: Fetches user-specific data (e.g., `/album/sublist`).
 *   `ResourceController`: Handles generic resource data (e.g., comments).
 
 ### Admin API (/admin)
@@ -84,3 +84,4 @@ This project is a foundation. The following are key areas for improvement, prior
     *   [ ] **Generate API Documentation** with `springdoc-openapi` (Swagger UI).
     *   [ ] **Provide Seed Data** via a `data.sql` file to make the API instantly testable.
     *   [ ] **Enforce Code Style** with the `ktlint` Gradle plugin.
+    *   [ ] **Refine Configuration:** Convert application.properties to the more structured application.yml format.
