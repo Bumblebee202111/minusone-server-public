@@ -8,6 +8,8 @@ This backend is a personal learning project, an attempt to build a simplified, N
 
 The name, **减一 (MinusOne)**, reflects this "less-is-more" approach: focusing on clean, pragmatic code for core features rather than attempting a full clone.
 
+> **Note:** Synced from a private repository via [Copybara](https://github.com/google/copybara).
+
 ## Key Concepts
 
 - **Testing Strategy:** Includes examples of both service-layer **Unit Tests** (using JUnit 5 + MockK) and controller-layer **API Integration Tests** (using MockMvc) to ensure code quality.
