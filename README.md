@@ -4,21 +4,23 @@
 
 ## About This Project
 
-This backend is a personal learning project, an attempt to build a simplified, NCM-like server using Kotlin and Spring Boot. The long-term goal is for this server to support a series of client-side learning projects.
+This backend is a personal learning project, an attempt to build a simplified server inspired by NetEase Cloud Music (NCM) using Kotlin and Spring Boot. The long-term goal is to support a series of client-side learning projects.
 
-The name, **减一 (MinusOne)**, reflects this "less-is-more" approach: focusing on clean, pragmatic code for core features rather than attempting a full clone.
+The name, **减一 (MinusOne)**, reflects a "less-is-more" philosophy: focusing on clean, pragmatic code for core features rather than attempting a full clone.
 
 > **Note:** Synced from a private repository via [Copybara](https://github.com/google/copybara).
 
 ## Key Concepts
 
-- **Testing Strategy:** Includes examples of both service-layer **Unit Tests** (using JUnit 5 + MockK) and controller-layer **API Integration Tests** (using MockMvc) to ensure code quality.
-- **Dual API Domains:** The project is split into two domains. The **Public API** (/api, /eapi) mimics the conventions of the original NCM client. In contrast, the **Admin API** (/admin) is a custom design used to implement modern RESTful best practices.
-- **Layered Architecture:** Follows a clear separation between Controller, Service, and Repository layers.
-- **DTOs & Mappers:** Uses DTOs and Kotlin extension functions to keep the API layer separate from database entities.
-- **Centralized Error Handling:** Uses @RestControllerAdvice to create consistent JSON error responses from custom exceptions.
-- **Externalized Configuration:** Manages settings like database connections and file paths in application.properties.
-- **Simulated CDN Architecture:** The API generates URLs pointing to a separate delivery controller, demonstrating a professional architecture for handling media.
+- **Testing Strategy:** Demonstrates service-layer **Unit Tests** (JUnit 5 + MockK) and controller-layer **Integration Tests** (MockMvc).
+- **Dual API Domains:**
+    - **Public API** (`/api`, `/eapi`): Mimics NCM client conventions.
+    - **Admin API** (`/admin`): Follows modern RESTful best practices.
+- **Layered Architecture:** Enforces strict separation between Controller, Service, and Repository layers.
+- **DTOs & Data Mapping:** Decouples API contracts from database entities using DTOs and Kotlin extension functions.
+- **Error Handling:** Centralized JSON error responses via `@RestControllerAdvice`.
+- **Configuration:** Environment settings (DB, paths) are externalized in `application.properties`.
+- **Media Delivery:** Simulates a CDN architecture by serving media via a dedicated delivery controller.
 
 ## Tech Stack
 
@@ -29,29 +31,29 @@ The name, **减一 (MinusOne)**, reflects this "less-is-more" approach: focusing
 
 ## API Controllers
 
-### Public API (/api, /eapi)
+### Public API (`/api`, `/eapi`)
 
-*   `AuthController`: Handles authentication and registration.
-*   `MusicController`: Fetches public music data (songs, playlists) and handles user actions (e.g., `/song/like`).
-*   `UserController`: Fetches user-specific data (e.g., `/album/sublist`).
-*   `ResourceController`: Handles generic resource data (e.g., comments).
+*   `AuthController`: Handles user authentication and registration.
+*   `MusicController`: Serves music data (songs, playlists) and handles user interactions.
+*   `UserController`: Manages user-specific data and sub-lists.
+*   `ResourceController`: Provides generic resource data (e.g., comments).
 
-### Admin API (/admin)
+### Admin API (`/admin`)
 
-*   `AdminAccountController`: CRUD for user accounts.
-*   `AdminSongController`: CRUD for song metadata.
-*   `AdminResourceController`: Upload, list, and delete media files.
+*   `AdminAccountController`: Manages user accounts.
+*   `AdminSongController`: CRUD operations for song metadata.
+*   `AdminResourceController`: Handles media file uploads and management.
 
 ## Getting Started
 
 ### Prerequisites
 *   JDK 17+
-*   A running MySQL instance.
+*   MySQL instance
 
 ### Configuration
-Update `src/main/resources/application.properties` with your database credentials.
+1.  Update `src/main/resources/application.properties` with your database credentials.
+2.  Configure local media storage (optional):
 
-The local file storage path is also configured here:
 ```properties
 # Local directory for storing media files.
 app.media.storage-path=minusone-media/originals
@@ -62,31 +64,14 @@ app.media.delivery-url=http://localhost:8080/cdn/media
 
 ### Running
 ```sh
-# From the project root
 ./gradlew bootRun
 ```
 The server will start on `http://localhost:8080`.
 
-## Future Learning Path (To-Dos)
+## Roadmap
 
-This project is a foundation. The following are key areas for improvement, prioritized to demonstrate the skills most valued for a professional backend role.
-
-- **Expand Test Coverage:**
-  - [ ] Add more **Unit Tests** and **Integration Tests** to cover other key features.
-  
-- **Containerization & DevOps (Next Priority):**
-  - [ ] Write a **Dockerfile** and `docker-compose.yml` to run the application and database together.
-
-- **Persistence Layer Versatility:**
-  - [ ] **Integrate MyBatis-Plus:** Implement a data access layer that can be swapped between JPA and MyBatis-Plus using Spring Profiles, demonstrating framework versatility.
-
-- **API & Feature Enhancements:**
-  - [ ] **Complete Core API Features:** Continue to implement and refine the API endpoints to create a more complete and robust user experience.
-  - [ ] **Introduce Caching:** Use **Redis** with `@Cacheable` to improve performance on frequently accessed data.
-  - [ ] **Upgrade Admin Auth:** Evolve the admin API from HTTP Basic to stateless **JWT** authentication.
-
-- **Project Polish:**
-  - [ ] **Generate API Documentation** with `springdoc-openapi` (Swagger UI).
-  - [ ] **Provide Seed Data** via a `data.sql` file to make the API instantly testable.
-  - [ ] **Enforce Code Style** with the `ktlint` Gradle plugin.
-  - [ ] **Refine Configuration:** Convert `application.properties` to the more structured `application.yml` format.
+- **Test Coverage:** Expand Unit and Integration tests.
+- **DevOps:** Add Dockerfile and `docker-compose.yml`.
+- **Persistence:** Implement strategy to swap between JPA and MyBatis-Plus.
+- **Features:** Complete core API, add Redis caching, and implement JWT for admin auth.
+- **Polish:** Add Swagger UI, seed data (`data.sql`), enforce `ktlint`, and migrate to `application.yml`.
