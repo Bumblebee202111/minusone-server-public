@@ -1,6 +1,7 @@
 package com.github.bumblebee202111.minusone.server.controller.cdn
 
 import jakarta.annotation.PostConstruct
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
 import org.springframework.core.io.Resource
@@ -18,6 +19,7 @@ class MediaController(
     private val storagePath: String
 ) {
 
+    private val log = LoggerFactory.getLogger(MediaController::class.java)
     private lateinit var storageRoot: Path
 
     @PostConstruct
@@ -26,8 +28,12 @@ class MediaController(
         if (!Files.exists(storageRoot)) {
             try {
                 Files.createDirectories(storageRoot)
-            } catch (_: Exception) {
+                log.info("Created media storage directory at {}", storageRoot)
+            } catch (e: Exception) {
+                log.error("Failed to create media storage directory at {}", storageRoot, e)
             }
+        } else {
+            log.info("Using existing media storage directory at {}", storageRoot)
         }
     }
 
@@ -37,6 +43,7 @@ class MediaController(
 
         
         if (!requestedFile.startsWith(storageRoot)) {
+            log.warn("Blocked directory traversal attempt: {}", filename)
             return ResponseEntity.badRequest().build()
         }
 

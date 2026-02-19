@@ -30,8 +30,11 @@ class UserController(val userService: UserService) {
         @RequestParam @Positive uid: Long,
         @RequestParam @PositiveOrZero limit: Int = 1000,
         @RequestParam @PositiveOrZero offset: Int = 0
-    ): UserPlaylistsDto {
-        return UserPlaylistsDto(userService.userPlaylists(uid))
+    ): ApiResponse {
+        val playlists = userService.userPlaylists(uid)
+        return ApiResponse.success().apply {
+            add("playlist", playlists)
+        }
     }
 
 }

@@ -40,12 +40,19 @@ class EapiGzipResponseAdvice(
 
         if (servletRequest.requestURI.startsWith("/eapi") && "true" == servletRequest.getHeader("x-aeapi")) {
             val jsonString = objectMapper.writeValueAsString(body)
-            val byteArrayOutputStream = ByteArrayOutputStream()
-            GZIPOutputStream(byteArrayOutputStream).use { gzipOutputStream ->
-                gzipOutputStream.write(jsonString.toByteArray(Charsets.UTF_8))
+            
+            val compressedBytes = ByteArrayOutputStream().use { byteArrayOutputStream ->
+                GZIPOutputStream(byteArrayOutputStream).use { gzipOutputStream ->
+                    gzipOutputStream.write(jsonString.toByteArray(Charsets.UTF_8))
+                }
+                byteArrayOutputStream.toByteArray()
             }
 
-            return byteArrayOutputStream.toByteArray()
+            response.headers.contentType = MediaType.APPLICATION_JSON
+            
+            response.body.write(compressedBytes)
+            
+            return null
         }
 
         return body

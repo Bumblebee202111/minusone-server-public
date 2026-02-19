@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.bumblebee202111.minusone.server.dto.api.response.ApiResponse
 import com.github.bumblebee202111.minusone.server.exception.api.WrrongParamException
-import com.github.bumblebee202111.minusone.server.util.CryptoUtil
+import com.github.bumblebee202111.minusone.server.security.CryptoUtil
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletRequestWrapper

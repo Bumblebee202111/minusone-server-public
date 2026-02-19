@@ -9,6 +9,7 @@ class CorsConfig:WebMvcConfigurer {
     override fun addCorsMappings(registry: CorsRegistry) {
         registry.addMapping("/admin/**")
             .allowedOrigins("http:
-            .allowedMethods("GET", "POST")
+            .allowedMethods("GET", "POST", "OPTIONS")
+            .allowCredentials(true)
     }
 }

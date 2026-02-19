@@ -5,5 +5,5 @@ import org.springframework.web.bind.annotation.ResponseStatus
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class SongWithIdDoesNotExistAdminException(
-    val userId: Long
-):AdminApiException("Song with ID $userId does not exists")
+    val songId: Long
+):AdminApiException("Song with ID $songId does not exists")

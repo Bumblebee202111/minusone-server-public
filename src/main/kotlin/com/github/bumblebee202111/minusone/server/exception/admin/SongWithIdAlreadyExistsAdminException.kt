@@ -5,5 +5,5 @@ import org.springframework.web.bind.annotation.ResponseStatus
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 class SongWithIdAlreadyExistsAdminException(
-    val userId: Long
-):AdminApiException("Song with ID $userId already exists")
+    val songId: Long
+):AdminApiException("Song with ID $songId already exists")

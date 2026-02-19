@@ -1,8 +1,6 @@
 package com.github.bumblebee202111.minusone.server.config
 
 import com.github.bumblebee202111.minusone.server.filter.ApiAuthFilter
-import org.apache.catalina.webresources.TomcatURLStreamHandlerFactory.disable
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
@@ -33,7 +31,9 @@ class SecurityConfig {
             authorizeHttpRequests {
                 authorize(anyRequest, permitAll)
             }
-            sessionManagement { disable() }
+            sessionManagement {
+                sessionCreationPolicy = SessionCreationPolicy.STATELESS
+            }
             csrf { disable() }
         }
         return http.build()

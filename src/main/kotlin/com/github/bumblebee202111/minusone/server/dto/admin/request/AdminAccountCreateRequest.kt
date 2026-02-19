@@ -31,7 +31,7 @@ fun AdminAccountCreateRequest.toAccountEntity(): Account {
     )
 }
 
-fun AdminAccountCreateRequest.toProfileEntity(associatedAccount: Account): com.github.bumblebee202111.minusone.server.entity.Profile {
+fun AdminAccountCreateRequest.toProfileEntity(associatedAccount: Account): Profile {
     return Profile(
         account = associatedAccount,
         nickname = this.nickname

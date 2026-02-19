@@ -1,4 +1,4 @@
-package com.github.bumblebee202111.minusone.server.util
+package com.github.bumblebee202111.minusone.server.security
 
 import java.security.MessageDigest
 import java.util.*
@@ -28,8 +28,6 @@ object CryptoUtil {
         cipher.init(Cipher.DECRYPT_MODE, secretKey)
         val encryptedBytes = Base64.getDecoder().decode(encryptedBase64)
         val decryptedBytes = cipher.doFinal(encryptedBytes)
-        return String(decryptedBytes)
+        return String(decryptedBytes, Charsets.UTF_8)
     }
-
-
 }

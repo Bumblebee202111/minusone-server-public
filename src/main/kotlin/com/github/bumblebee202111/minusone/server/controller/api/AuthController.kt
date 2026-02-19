@@ -3,11 +3,11 @@ package com.github.bumblebee202111.minusone.server.controller.api
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.bumblebee202111.minusone.server.constant.api.ApiCodes
 import com.github.bumblebee202111.minusone.server.constant.api.ApiConstants
-import com.github.bumblebee202111.minusone.server.entity.RegisterAnonimousResult
 import com.github.bumblebee202111.minusone.server.service.api.AuthService
 import com.github.bumblebee202111.minusone.server.service.api.ProfileService
 import com.github.bumblebee202111.minusone.server.dto.api.response.ApiResponse
 import com.github.bumblebee202111.minusone.server.dto.api.internal.CellphoneLoginRequest
+import com.github.bumblebee202111.minusone.server.dto.api.internal.RegisterAnonimousResult
 import com.github.bumblebee202111.minusone.server.dto.api.internal.RegisterRequest
 import com.github.bumblebee202111.minusone.server.dto.api.response.toDto
 import jakarta.servlet.http.Cookie

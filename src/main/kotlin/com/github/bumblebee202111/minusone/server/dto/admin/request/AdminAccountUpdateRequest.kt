@@ -1,7 +1,7 @@
 package com.github.bumblebee202111.minusone.server.dto.admin.request
 
 import com.github.bumblebee202111.minusone.server.entity.Account
-import com.github.bumblebee202111.minusone.server.util.CryptoUtil
+import com.github.bumblebee202111.minusone.server.security.CryptoUtil
 import jakarta.validation.constraints.Size
 
 data class AdminAccountUpdateRequest(

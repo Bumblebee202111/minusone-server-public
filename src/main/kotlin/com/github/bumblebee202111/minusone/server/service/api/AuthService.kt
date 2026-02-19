@@ -1,12 +1,12 @@
 package com.github.bumblebee202111.minusone.server.service.api
 
 import com.github.bumblebee202111.minusone.server.dto.api.internal.CellphoneLoginRequest
+import com.github.bumblebee202111.minusone.server.dto.api.internal.RegisterAnonimousResult
 import com.github.bumblebee202111.minusone.server.dto.api.internal.RegisterRequest
 import com.github.bumblebee202111.minusone.server.dto.api.response.PhoneAccountInfoDto
 import com.github.bumblebee202111.minusone.server.entity.Account
 import com.github.bumblebee202111.minusone.server.entity.AnonimousUser
-import com.github.bumblebee202111.minusone.server.entity.Profile
-import com.github.bumblebee202111.minusone.server.entity.RegisterAnonimousResult
+import com.github.bumblebee202111.minusone.server.entity.AuthToken
 import com.github.bumblebee202111.minusone.server.exception.api.LoginCellphoneNotRegisteredException
 import com.github.bumblebee202111.minusone.server.exception.api.LoginWrongIdOrPasswordException
 import com.github.bumblebee202111.minusone.server.exception.api.PhoneOrUserAlreadyRegisteredException
@@ -26,8 +26,8 @@ class AuthService(
     private val accountRepository: AccountRepository,
     private val authTokenRepository: AuthTokenRepository,
     private val anonimousUserRepository: AnonimousUserRepository,
-    private val playlistRepository: PlaylistRepository,
-    private val profileRepository: ProfileRepository
+    private val profileRepository: ProfileRepository,
+    private val userInitializationService: UserInitializationService
 ) {
     private val log = LoggerFactory.getLogger(AuthService::class.java)
     private val tokenValidityDurationSeconds: Long = 30 * 24 * 60 * 60
@@ -52,7 +52,7 @@ class AuthService(
         val now = Instant.now()
         val expiresAt = now.plusSeconds(tokenValidityDurationSeconds)
 
-        val authToken = com.github.bumblebee202111.minusone.server.entity.AuthToken(
+        val authToken = AuthToken(
             token = tokenValue,
             account = account,
             expiresAt = expiresAt
@@ -67,7 +67,7 @@ class AuthService(
     fun validateTokenAndGetAccount(token: String): Account? {
         if (token.isBlank()) return null
 
-        val authToken: com.github.bumblebee202111.minusone.server.entity.AuthToken? = authTokenRepository.findByTokenAndExpiresAtAfter(token, Instant.now())
+        val authToken: AuthToken? = authTokenRepository.findByTokenAndExpiresAtAfter(token, Instant.now())
 
         if (authToken == null) {
             log.warn("Token {} not found or has expired.", token)
@@ -135,25 +135,7 @@ class AuthService(
         val savedAccount = accountRepository.save(newAccount)
         log.info("New account registered: userName {}, ID {}", savedAccount.userName, savedAccount.id)
 
-        val newProfile = Profile(
-            account = savedAccount,
-            nickname = registerRequest.nickname
-        )
-        profileRepository.save(newProfile)
-        try {
-            val likeList = com.github.bumblebee202111.minusone.server.entity.Playlist(
-                name = "喜欢的音乐",
-                specialType = com.github.bumblebee202111.minusone.server.entity.Playlist.SpecialType.STAR,
-                userId = savedAccount.id,
-            )
-            playlistRepository.save(likeList)
-        } catch (e: Exception) {
-            log.error(
-                "CRITICAL: Failed to create '喜欢的音乐' playlist for accountId: {}. Error: {}",
-                savedAccount.id, e.message, e
-            )
-            throw RuntimeException("Failed to initialize crucial user data (favorite playlist).", e)
-        }
+        userInitializationService.initializeNewUser(savedAccount, registerRequest.nickname)
 
         val tokenString = issueTokenForAccount(savedAccount)
 
