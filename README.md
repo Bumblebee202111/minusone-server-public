@@ -2,53 +2,53 @@
 
 ![Kotlin](https://img.shields.io/badge/kotlin-1.9.x-blueviolet?style=flat-square) ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-green?style=flat-square) ![Build Status](https://img.shields.io/badge/build-passing-brightgreen?style=flat-square)
 
-## About This Project
+## Project Vision
 
-This backend is a personal learning project, an attempt to build a simplified server inspired by NetEase Cloud Music (NCM) using Kotlin and Spring Boot. The long-term goal is to support a series of client-side learning projects.
+**MinusOne (减一)** is a standalone backend inspired by NetEase Cloud Music (NCM). It serves as the backend foundation for the **MinusOne Ecosystem**, supporting clients like the Android App and Admin Frontend.
 
-The name, **减一 (MinusOne)**, reflects a "less-is-more" philosophy: focusing on clean, pragmatic code for core features rather than attempting a full clone.
+**Goal:** Provide a scalable backend with an NCM-compatible API (`/api`, `/eapi`) for seamless client integration.
+
+**Philosophy:** "**Less is more**" — prioritizing clean code, modernization, and maintainability over a full feature clone.
 
 > **Note:** Synced from a private repository via [Copybara](https://github.com/google/copybara).
 
-## Key Concepts
+## Architecture & Patterns
 
-- **Testing Strategy:** Demonstrates service-layer **Unit Tests** (JUnit 5 + MockK) and controller-layer **Integration Tests** (MockMvc).
-- **Dual API Domains:**
-    - **Public API** (`/api`, `/eapi`): Mimics NCM client conventions.
-    - **Admin API** (`/admin`): Follows modern RESTful best practices.
-- **Layered Architecture:** Enforces strict separation between Controller, Service, and Repository layers.
-- **DTOs & Data Mapping:** Decouples API contracts from database entities using DTOs and Kotlin extension functions.
-- **Error Handling:** Centralized JSON error responses via `@RestControllerAdvice`.
-- **Configuration:** Environment settings (DB, paths) are externalized in `application.properties`.
-- **Media Delivery:** Simulates a CDN architecture by serving media via a dedicated delivery controller.
+*   **Dual API Strategy:**
+    *   **Public (`/api`, `/eapi`):** **NCM API Compatibility.** Matches the official NCM API contract. Core logic implemented where necessary; placeholders used elsewhere to ensure broad client support.
+    *   **Admin (`/admin`):** API for the Admin Frontend following GET/POST best practices.
+*   **Layered Architecture:** Enforces strict separation between Controller, Service, and Repository layers.
+*   **Data Mapping:** Uses Kotlin extension functions for clean Entity-DTO conversion.
+*   **Error Handling:** Centralized JSON error responses via `@RestControllerAdvice`.
+*   **Media Delivery:** Simulates CDN architecture via a dedicated delivery controller.
+*   **Testing:** Service-layer **Unit Tests** (JUnit 5 + MockK) and Controller-layer **Integration Tests** (MockMvc).
 
 ## Tech Stack
 
-*   **Language:** Kotlin
-*   **Framework:** Spring Boot 3, Spring Security, Spring Data JPA
-*   **Database:** MySQL
-*   **Build Tool:** Gradle
+*   **Core:** Kotlin, Spring Boot 3, Spring Security
+*   **Data:** Spring Data JPA, MySQL
+*   **Build:** Gradle
 
 ## API Controllers
 
 ### Public API (`/api`, `/eapi`)
 
-*   `AuthController`: Handles user authentication and registration.
-*   `MusicController`: Serves music data (songs, playlists) and handles user interactions.
-*   `UserController`: Manages user-specific data and sub-lists.
-*   `ResourceController`: Provides generic resource data (e.g., comments).
+*   `AuthController`: Authentication and registration.
+*   `MusicController`: Music data (songs, playlists) and user interactions.
+*   `UserController`: User profiles and sub-lists.
+*   `ResourceController`: Generic resources (e.g., comments).
 
 ### Admin API (`/admin`)
 
-*   `AdminAccountController`: Manages user accounts.
-*   `AdminSongController`: CRUD operations for song metadata.
-*   `AdminResourceController`: Handles media file uploads and management.
+*   `AdminAccountController`: User account management.
+*   `AdminSongController`: Song metadata CRUD.
+*   `AdminResourceController`: Media file uploads and management.
 
 ## Getting Started
 
 ### Prerequisites
 *   JDK 17+
-*   MySQL instance
+*   MySQL 8.0+
 
 ### Configuration
 1.  Update `src/main/resources/application.properties` with your database credentials.
@@ -66,12 +66,12 @@ app.media.delivery-url=http://localhost:8080/cdn/media
 ```sh
 ./gradlew bootRun
 ```
-The server will start on `http://localhost:8080`.
+The server starts at `http://localhost:8080`.
 
 ## Roadmap
 
 - **Test Coverage:** Expand Unit and Integration tests.
 - **DevOps:** Add Dockerfile and `docker-compose.yml`.
-- **Persistence:** Implement strategy to swap between JPA and MyBatis-Plus.
-- **Features:** Complete core API, add Redis caching, and implement JWT for admin auth.
-- **Polish:** Add Swagger UI, seed data (`data.sql`), enforce `ktlint`, and migrate to `application.yml`.
+- **Persistence:** Support swapping between JPA and MyBatis-Plus.
+- **Features:** Core API completion, Redis caching, JWT for admin auth.
+- **Polish:** Swagger UI, seed data (`data.sql`), `ktlint` enforcement, migration to `application.yml`.
