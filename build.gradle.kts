@@ -4,7 +4,7 @@ plugins {
     kotlin("jvm") version "1.9.25"
     kotlin("plugin.jpa") version "1.9.25"
     kotlin("plugin.spring") version "1.9.25"
-    id("org.springframework.boot") version "3.3.5"
+    id("org.springframework.boot") version "3.5.11"
     id("io.spring.dependency-management") version "1.1.7"
     id("com.github.ben-manes.versions") version "0.51.0"
 }
@@ -33,8 +33,8 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
-    testImplementation("io.mockk:mockk:1.14.6")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:6.2.3")
+    testImplementation("io.mockk:mockk:1.14.9")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
