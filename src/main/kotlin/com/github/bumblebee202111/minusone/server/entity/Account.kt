@@ -13,8 +13,4 @@ data class Account(
     var phone: String,
     @Column(nullable = false)
     var password: String,  
-
-    
-    val status:Int=0,
-    val type:Int=1,
 )

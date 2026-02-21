@@ -8,6 +8,4 @@ import jakarta.persistence.Id
 data class Privilege(
     @Id
     val id: Long,
-    val pl: Int,
-    val dl: Int,
 )

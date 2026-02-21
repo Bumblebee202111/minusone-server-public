@@ -9,7 +9,7 @@ data class AuthToken(
     val token:String,
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "account_id", nullable = false)
-    var account: com.github.bumblebee202111.minusone.server.entity.Account,
+    var account: Account,
 
     @Column(nullable = false)
     var expiresAt: Instant

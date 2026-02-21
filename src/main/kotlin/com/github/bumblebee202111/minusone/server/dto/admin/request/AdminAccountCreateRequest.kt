@@ -26,8 +26,7 @@ fun AdminAccountCreateRequest.toAccountEntity(): Account {
     return Account(
         phone = this.phone,
         userName = "1_${this.phone}",
-        password = this.password,
-        status = 0
+        password = this.password
     )
 }
 
