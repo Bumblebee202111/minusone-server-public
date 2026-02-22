@@ -27,6 +27,7 @@
 
 *   **Core:** Kotlin, Spring Boot 3, Spring Security
 *   **Data:** Spring Data JPA, MySQL
+*   **Docs:** SpringDoc OpenAPI (Swagger UI)
 *   **Build:** Gradle
 
 ## API Controllers
@@ -68,10 +69,12 @@ app.media.delivery-url=http://localhost:8080/cdn/media
 ```
 The server starts at `http://localhost:8080`.
 
+API Documentation is available at `http://localhost:8080/swagger-ui.html`.
+
 ## Roadmap
 
 - **Test Coverage:** Expand Unit and Integration tests.
 - **DevOps:** Add Dockerfile and `docker-compose.yml`.
 - **Persistence:** Support swapping between JPA and MyBatis-Plus.
 - **Features:** Core API completion, Redis caching, JWT for admin auth.
-- **Polish:** Swagger UI, seed data (`data.sql`), `ktlint` enforcement, migration to `application.yml`.
+- **Polish:** Seed data (`data.sql`), `ktlint` enforcement, migration to `application.yml`.
