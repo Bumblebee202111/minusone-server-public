@@ -16,7 +16,7 @@
 
 *   **Dual API Strategy:**
     *   **Public (`/api`, `/eapi`):** **NCM API Compatibility.** Matches the official NCM API contract. Core logic implemented where necessary; placeholders used elsewhere to ensure broad client support.
-    *   **Admin (`/admin`):** API for the Admin Frontend following GET/POST best practices.
+    *   **Admin (`/admin`):**  Modern RESTful API for the Admin Frontend.
 *   **Layered Architecture:** Enforces strict separation between Controller, Service, and Repository layers.
 *   **Data Mapping:** Uses Kotlin extension functions for clean Entity-DTO conversion.
 *   **Error Handling:** Centralized JSON error responses via `@RestControllerAdvice`.
