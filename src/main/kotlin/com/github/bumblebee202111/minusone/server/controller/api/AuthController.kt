@@ -10,16 +10,20 @@ import com.github.bumblebee202111.minusone.server.dto.api.internal.CellphoneLogi
 import com.github.bumblebee202111.minusone.server.dto.api.internal.RegisterAnonimousResult
 import com.github.bumblebee202111.minusone.server.dto.api.internal.RegisterRequest
 import com.github.bumblebee202111.minusone.server.dto.api.response.toDto
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.constraints.NotBlank
 import org.slf4j.LoggerFactory
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/eapi")
+@Tag(name = "Auth", description = "Authentication APIs")
 class AuthController(
     private val authService: AuthService,
     private val profileService: ProfileService,
@@ -29,17 +33,19 @@ class AuthController(
     private val log = LoggerFactory.getLogger(AuthController::class.java)
 
     @RequestMapping("/register/anonimous")
+    @Operation(summary = "Register anonymously", description = "Registers a new user anonymously")
     fun registerAnonimous(
-        username: String
+        @RequestParam username: String
     ): RegisterAnonimousResult {
         return authService.registerAnonimously(username)
     }
 
     @RequestMapping("/register/cellphone")
+    @Operation(summary = "Register with cellphone", description = "Registers a new user with cellphone")
     fun registerWithCellphone(
         @NotBlank
         @RequestParam phone: String,
-        @RequestParam countrycode: String = "86",
+        @RequestParam(defaultValue = "86") countrycode: String,
         @NotBlank
         @RequestParam captcha: String,
         @RequestParam nickname: String,
@@ -67,9 +73,10 @@ class AuthController(
     }
 
     @RequestMapping("/login/cellphone")
+    @Operation(summary = "Login with cellphone", description = "Logs in a user with cellphone")
     fun cellphoneLogin(
         @RequestParam phone: String,
-        @RequestParam(required = false) countrycode: String? = "86",
+        @RequestParam(required = false, defaultValue = "86") countrycode: String?,
         @RequestParam(required = false) password: String,
         response: HttpServletResponse
     ): ApiResponse {
@@ -112,12 +119,14 @@ class AuthController(
     }
 
     @RequestMapping("/logout")
+    @Operation(summary = "Logout", description = "Logs out the current user")
     fun logout(response: HttpServletResponse): ApiResponse {
         authService.logout(response)
         return ApiResponse.success()
     }
 
     @RequestMapping("cellphone/existence/check")
+    @Operation(summary = "Check cellphone existence", description = "Checks if a cellphone is already registered")
     fun checkCellphoneExistence(
         @RequestParam @NotBlank cellphone: String,
         @RequestParam(defaultValue = "86") countrycode: String

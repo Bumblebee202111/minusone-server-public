@@ -1,5 +1,7 @@
 package com.github.bumblebee202111.minusone.server.controller.cdn
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.annotation.PostConstruct
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -14,6 +16,7 @@ import java.nio.file.Paths
 
 @RestController
 @RequestMapping("/cdn/media")
+@Tag(name = "Media", description = "Media related APIs")
 class MediaController(
     @Value("\${app.media.storage-path:minusone-media-default/originals}")
     private val storagePath: String
@@ -38,6 +41,7 @@ class MediaController(
     }
 
     @GetMapping("/{filename:.+}")
+    @Operation(summary = "Serve file", description = "Serves a media file")
     fun serveFile(@PathVariable filename: String): ResponseEntity<Resource> {
         val requestedFile = storageRoot.resolve(filename).normalize()
 
