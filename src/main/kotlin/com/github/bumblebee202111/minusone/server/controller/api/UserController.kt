@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*
 @Tag(name = "User", description = "User related APIs")
 class UserController(val userService: UserService) {
 
-    @RequestMapping("/v1/user/detail/{uid}")
+    @GetMapping("/v1/user/detail/{uid}")
     @Operation(summary = "Get user detail", description = "Gets user detail by user ID")
     fun getV1UserDetail(@PathVariable @Positive uid: Long): ApiResponse {
         val targetAccount = userService.getAccountById(uid)
@@ -29,7 +29,7 @@ class UserController(val userService: UserService) {
         }
     }
 
-    @RequestMapping("/user/playlist")
+    @GetMapping("/user/playlist")
     @Operation(summary = "Get user playlists", description = "Gets user playlists by user ID")
     fun userPlaylists(
         @RequestParam @Positive uid: Long,

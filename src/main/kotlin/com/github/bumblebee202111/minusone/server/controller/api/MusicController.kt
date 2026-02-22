@@ -29,7 +29,7 @@ class MusicController(
 ) {
 
     
-    @RequestMapping(path = ["/playlist/v4/detail", "/v6/playlist/detail"])
+    @GetMapping(path = ["/playlist/v4/detail", "/v6/playlist/detail"])
     @Operation(summary = "Get playlist detail", description = "Gets playlist detail by playlist ID")
     fun getPlaylistDetail(
         @RequestParam @Positive id: Long,
@@ -47,7 +47,7 @@ class MusicController(
         }
     }
 
-    @RequestMapping("/v3/song/detail")
+    @GetMapping("/v3/song/detail")
     @Operation(summary = "Get song details", description = "Gets song details by song IDs")
     fun getV3SongDetails(@JsonQueryParam("c") songRequests: List<SongIdAndVersionRequestDto>): ApiResponse {
         val songIds = songRequests.map { it.id }
@@ -61,7 +61,7 @@ class MusicController(
         }
     }
 
-    @RequestMapping("/song/enhance/player/url/v1")
+    @GetMapping("/song/enhance/player/url/v1")
     @Operation(summary = "Get song URLs", description = "Gets song URLs by song IDs")
     fun getSongUrlsV1(
         @JsonQueryParam("ids") songIds: List<Long>?,
@@ -76,7 +76,7 @@ class MusicController(
         return ApiResponse.success(data = songUrls)
     }
 
-    @RequestMapping("/song/lyric/v1")
+    @GetMapping("/song/lyric/v1")
     @Operation(summary = "Get song lyrics", description = "Gets song lyrics by song ID")
     fun getSongLyricsV1(@RequestParam @Positive id: Long): ApiResponse {
         val lyrics = musicService.getSongLyrics(id)
@@ -90,7 +90,7 @@ class MusicController(
         return ApiResponse.success(data = redHeartResult)
     }
 
-    @RequestMapping("/song/like")
+    @GetMapping("/song/like")
     @Operation(summary = "Like song", description = "Likes or unlikes a song")
     fun likeSong(
         @RequestParam("like") like: Boolean,
@@ -122,7 +122,7 @@ class MusicController(
         return ApiResponse.success(data = subbedAlbumList)
     }
 
-    @RequestMapping("/playlist/privilege")
+    @GetMapping("/playlist/privilege")
     @Operation(summary = "Get playlist privileges", description = "Gets playlist privileges by playlist ID")
     fun getPlaylistPrivileges(
         @Positive id: Long,
@@ -132,7 +132,7 @@ class MusicController(
         return ApiResponse.success(privileges)
     }
 
-    @RequestMapping("song/like/get")
+    @GetMapping("song/like/get")
     @Operation(summary = "Get liked songs", description = "Gets liked songs")
     fun getSongLikes(@CookieValue(value = "MUSIC_U", defaultValue = "") musicUCookieValue: String): SongLikesDto {
         return musicService.getLikedSongs(musicUCookieValue)
