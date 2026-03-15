@@ -1,4 +1,4 @@
-package com.github.bumblebee202111.minusone.server.util
+package com.github.bumblebee202111.minusone.server.security.util
 
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts

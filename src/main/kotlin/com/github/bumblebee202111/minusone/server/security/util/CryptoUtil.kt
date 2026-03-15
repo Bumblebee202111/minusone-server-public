@@ -1,7 +1,7 @@
-package com.github.bumblebee202111.minusone.server.security
+package com.github.bumblebee202111.minusone.server.security.util
 
 import java.security.MessageDigest
-import java.util.*
+import java.util.Base64
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 

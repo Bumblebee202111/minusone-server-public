@@ -2,7 +2,7 @@ package com.github.bumblebee202111.minusone.server.controller.admin
 
 import com.github.bumblebee202111.minusone.server.dto.admin.request.AdminLoginRequest
 import com.github.bumblebee202111.minusone.server.dto.admin.response.AdminLoginResponse
-import com.github.bumblebee202111.minusone.server.util.JwtUtil
+import com.github.bumblebee202111.minusone.server.security.util.JwtUtil
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.security.authentication.AuthenticationManager

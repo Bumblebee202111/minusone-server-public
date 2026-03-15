@@ -4,8 +4,6 @@ import com.github.bumblebee202111.minusone.server.dto.admin.request.AdminSongUpd
 import com.github.bumblebee202111.minusone.server.dto.admin.request.AdminSongCreateRequest
 import com.github.bumblebee202111.minusone.server.dto.admin.request.toEntity
 import com.github.bumblebee202111.minusone.server.dto.admin.request.updateEntity
-import com.github.bumblebee202111.minusone.server.exception.admin.SongWithIdAlreadyExistsAdminException
-import com.github.bumblebee202111.minusone.server.exception.admin.SongWithIdDoesNotExistAdminException
 import com.github.bumblebee202111.minusone.server.repository.SongRepository
 import com.github.bumblebee202111.minusone.server.dto.admin.response.AdminSongDto
 import com.github.bumblebee202111.minusone.server.dto.admin.response.PageResponseDto

@@ -1,4 +1,4 @@
-package com.github.bumblebee202111.minusone.server.filter
+package com.github.bumblebee202111.minusone.server.security.filter
 
 import com.github.bumblebee202111.minusone.server.constant.api.ApiConstants
 import com.github.bumblebee202111.minusone.server.service.api.AuthService

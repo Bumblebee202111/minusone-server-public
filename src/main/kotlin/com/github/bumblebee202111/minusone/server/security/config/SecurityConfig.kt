@@ -1,7 +1,7 @@
-package com.github.bumblebee202111.minusone.server.config
+package com.github.bumblebee202111.minusone.server.security.config
 
-import com.github.bumblebee202111.minusone.server.filter.ApiAuthFilter
-import com.github.bumblebee202111.minusone.server.filter.AdminJwtFilter
+import com.github.bumblebee202111.minusone.server.security.filter.AdminJwtFilter
+import com.github.bumblebee202111.minusone.server.security.filter.ApiAuthFilter
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean

@@ -1,6 +1,6 @@
-package com.github.bumblebee202111.minusone.server.filter
+package com.github.bumblebee202111.minusone.server.security.filter
 
-import com.github.bumblebee202111.minusone.server.util.JwtUtil
+import com.github.bumblebee202111.minusone.server.security.util.JwtUtil
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse

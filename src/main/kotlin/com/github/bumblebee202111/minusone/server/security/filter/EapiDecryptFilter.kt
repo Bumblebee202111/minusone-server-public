@@ -1,17 +1,15 @@
-package com.github.bumblebee202111.minusone.server.filter
+package com.github.bumblebee202111.minusone.server.security.filter
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.bumblebee202111.minusone.server.dto.api.response.ApiResponse
 import com.github.bumblebee202111.minusone.server.exception.api.WrrongParamException
-import com.github.bumblebee202111.minusone.server.security.CryptoUtil
+import com.github.bumblebee202111.minusone.server.security.util.CryptoUtil
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletRequestWrapper
 import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
-import org.springframework.core.annotation.Order
-import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -21,8 +19,6 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 import java.util.zip.GZIPOutputStream
 
-@Component
-@Order(1)
 class EapiDecryptFilter(
     private val objectMapper: ObjectMapper,
 ) : OncePerRequestFilter() {
