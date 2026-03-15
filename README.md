@@ -16,8 +16,9 @@
 
 *   **Dual API Strategy:**
     *   **Public (`/api`, `/eapi`):** **NCM API Compatibility.** Matches the official NCM API contract. Core logic implemented where necessary; placeholders used elsewhere to ensure broad client support.
-    *   **Admin (`/admin`):**  Modern RESTful API for the Admin Frontend.
-*   **Layered Architecture:** Enforces strict separation between Controller, Service, and Repository layers.
+    *   **Admin (`/admin`):** Modern RESTful API for the Admin Frontend.
+*   **Layered Architecture:** Enforces strict separation between layers. The data layer (Entities/Repositories) is shared, while business logic and controllers are strictly isolated between `admin` and `api`.
+*   **Security:** Stateless JWT authentication for the Admin API, and custom request decryption filters (`/eapi`) for NCM client compatibility.
 *   **Data Mapping:** Uses Kotlin extension functions for clean Entity-DTO conversion.
 *   **Error Handling:** Centralized JSON error responses via `@RestControllerAdvice`.
 *   **Media Delivery:** Simulates CDN architecture via a dedicated delivery controller.
@@ -25,7 +26,7 @@
 
 ## Tech Stack
 
-*   **Core:** Kotlin, Spring Boot 3, Spring Security
+*   **Core:** Kotlin, Spring Boot 3, Spring Security, JWT (jjwt)
 *   **Data:** Spring Data JPA, MySQL
 *   **Docs:** SpringDoc OpenAPI (Swagger UI)
 *   **Build:** Gradle
@@ -41,6 +42,7 @@
 
 ### Admin API (`/admin`)
 
+*   `AdminAuthController`: JWT generation and admin login.
 *   `AdminAccountController`: User account management.
 *   `AdminSongController`: Song metadata CRUD.
 *   `AdminResourceController`: Media file uploads and management.
@@ -52,10 +54,13 @@
 *   MySQL 8.0+
 
 ### Configuration
-1.  Update `src/main/resources/application.properties` with your database credentials.
+1.  Update `src/main/resources/application.properties` with your database credentials and JWT secret.
 2.  Configure local media storage (optional):
 
 ```properties
+# JWT Secret (Must be at least 256 bits / 32 characters long)
+app.jwt.secret=your-default-secret-key-that-is-very-long-and-secure
+
 # Local directory for storing media files.
 app.media.storage-path=minusone-media/originals
 
@@ -76,5 +81,5 @@ API Documentation is available at `http://localhost:8080/swagger-ui.html`.
 - **Test Coverage:** Expand Unit and Integration tests.
 - **DevOps:** Add Dockerfile and `docker-compose.yml`.
 - **Persistence:** Support swapping between JPA and MyBatis-Plus.
-- **Features:** Core API completion, Redis caching, JWT for admin auth.
+- **Features:** Core API completion, Redis caching.
 - **Polish:** Seed data (`data.sql`), `ktlint` enforcement, migration to `application.yml`.
