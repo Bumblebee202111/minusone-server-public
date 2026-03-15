@@ -1,9 +1,15 @@
 package com.github.bumblebee202111.minusone.server.config
 
 import com.github.bumblebee202111.minusone.server.filter.ApiAuthFilter
+import com.github.bumblebee202111.minusone.server.filter.AdminJwtFilter
+import jakarta.servlet.http.HttpServletResponse
+import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.ProviderManager
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.invoke
@@ -13,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.provisioning.InMemoryUserDetailsManager
+import org.springframework.security.web.AuthenticationEntryPoint
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
@@ -60,19 +67,41 @@ class SecurityConfig {
 
     @Bean
     @Order(2)
-    fun adminSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
+    fun adminSecurityFilterChain(
+        http: HttpSecurity,
+        adminJwtFilter: AdminJwtFilter
+    ): SecurityFilterChain {
         http {
             securityMatcher("/admin/**")
             authorizeHttpRequests {
+                authorize("/admin/auth/login", permitAll)
                 authorize(anyRequest, authenticated)
             }
-            httpBasic { }
             csrf { disable() }
             sessionManagement {
                 sessionCreationPolicy = SessionCreationPolicy.STATELESS
             }
+            exceptionHandling {
+                
+                authenticationEntryPoint = AuthenticationEntryPoint { _, response, _ ->
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")
+                }
+            }
+            addFilterBefore<UsernamePasswordAuthenticationFilter>(adminJwtFilter)
         }
         return http.build()
+    }
+
+    @Bean
+    fun authenticationManager(
+        userDetailsService: UserDetailsService,
+        passwordEncoder: PasswordEncoder
+    ): AuthenticationManager {
+        
+        val provider = DaoAuthenticationProvider(userDetailsService).apply {
+            setPasswordEncoder(passwordEncoder)
+        }
+        return ProviderManager(provider)
     }
 
     @Bean
@@ -85,7 +114,13 @@ class SecurityConfig {
     }
 
     @Bean
-    fun passwordEncoder(): PasswordEncoder {
-        return BCryptPasswordEncoder()
+    fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
+
+    
+    @Bean
+    fun disableAdminJwtFilterRegistration(adminJwtFilter: AdminJwtFilter): FilterRegistrationBean<AdminJwtFilter> {
+        return FilterRegistrationBean(adminJwtFilter).apply {
+            isEnabled = false
+        }
     }
 }

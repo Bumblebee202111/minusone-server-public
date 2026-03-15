@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.AuthenticationException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
@@ -25,6 +26,7 @@ class AdminGlobalExceptionHandler {
         )
         return ResponseEntity(errorResponse, HttpStatus.CONFLICT)
     }
+
     @ExceptionHandler(ResourceNotFoundException::class)
     fun handleResourceNotFound(ex: ResourceNotFoundException, request: HttpServletRequest): ResponseEntity<AdminErrorResponse> {
         log.warn("Admin Resource Not Found: {} for path {}", ex.message, request.requestURI)
@@ -37,6 +39,20 @@ class AdminGlobalExceptionHandler {
         )
         return ResponseEntity(errorResponse, HttpStatus.NOT_FOUND)
     }
+
+    @ExceptionHandler(AuthenticationException::class)
+    fun handleAuthenticationException(ex: AuthenticationException, request: HttpServletRequest): ResponseEntity<AdminErrorResponse> {
+        log.warn("Admin Authentication Failed: {} for path {}", ex.message, request.requestURI)
+
+        val errorResponse = AdminErrorResponse(
+            status = HttpStatus.UNAUTHORIZED.value(),
+            error = HttpStatus.UNAUTHORIZED.reasonPhrase,
+            message = "Invalid username or password", 
+            path = request.requestURI
+        )
+        return ResponseEntity(errorResponse, HttpStatus.UNAUTHORIZED)
+    }
+
     @ExceptionHandler(Exception::class)
     fun handleGenericException(ex: Exception, request: HttpServletRequest): ResponseEntity<AdminErrorResponse> {
         log.error("Unhandled Admin Exception for path ${request.requestURI}", ex)
