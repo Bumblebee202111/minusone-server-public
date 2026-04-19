@@ -4,9 +4,10 @@ import jakarta.persistence.*
 import java.time.Instant
 
 @Entity
+@Table(name = "auth_tokens")
 data class AuthToken(
     @Id
-    val token:String,
+    val token: String,
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "account_id", nullable = false)
     var account: Account,

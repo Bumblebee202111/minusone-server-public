@@ -4,11 +4,13 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.Table
 
 @Entity
+@Table(name = "audio_details")
 data class AudioDetail(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id:Long,
-    val br:Int
+    val id: Long = 0L,
+    val br: Int
 )

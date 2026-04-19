@@ -3,6 +3,7 @@ package com.github.bumblebee202111.minusone.server.entity
 import jakarta.persistence.*
 
 @Entity
+@Table(name = "users")
 data class User(
     @Id
     val id: Long = 0L,

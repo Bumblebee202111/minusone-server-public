@@ -4,11 +4,13 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.Table
 
 @Entity
+@Table(name = "anonimous_users")
 data class AnonimousUser(
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    val userId:Long=0L,
-    val createTime:Long
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val userId: Long = 0L,
+    val createTime: Long
 )

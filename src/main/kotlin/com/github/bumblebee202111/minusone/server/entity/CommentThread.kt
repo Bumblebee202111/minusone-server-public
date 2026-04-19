@@ -3,6 +3,7 @@ package com.github.bumblebee202111.minusone.server.entity
 import jakarta.persistence.*
 
 @Entity
+@Table(name = "comment_threads")
 data class CommentThread(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
