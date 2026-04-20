@@ -1,6 +1,6 @@
 package com.github.bumblebee202111.minusone.server.service.api
 
-import com.github.bumblebee202111.minusone.server.dto.admin.response.RedHeartResultDto
+import com.github.bumblebee202111.minusone.server.dto.api.response.RedHeartResultDto
 import com.github.bumblebee202111.minusone.server.dto.api.response.PrivilegeDto
 import com.github.bumblebee202111.minusone.server.dto.api.internal.PlaylistDetailResult
 import com.github.bumblebee202111.minusone.server.dto.api.internal.SongDetailsResult

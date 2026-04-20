@@ -7,18 +7,18 @@ import jakarta.validation.constraints.Size
 
 
 data class AdminAccountCreateRequest(
-    @NotBlank(message = "Phone number is required")
-    @Size(min = 5, max = 15, message = "Phone number length must be between 5 and 15")
+    @field:NotBlank(message = "Phone number is required")
+    @field:Size(min = 5, max = 15, message = "Phone number length must be between 5 and 15")
     val phone: String,
 
     val countrycode: String = "86",
 
-    @NotBlank(message = "Nickname is required")
-    @Size(min = 2, max = 30, message = "Nickname length must be between 2 and 30")
+    @field:NotBlank(message = "Nickname is required")
+    @field:Size(min = 2, max = 30, message = "Nickname length must be between 2 and 30")
     val nickname: String,
 
-    @NotBlank(message = "Password (MD5) is required")
-    @Size(min = 32, max = 32, message = "Password (MD5) must be 32 characters long")
+    @field:NotBlank(message = "Password (MD5) is required")
+    @field:Size(min = 32, max = 32, message = "Password (MD5) must be 32 characters long")
     val password: String
 )
 
