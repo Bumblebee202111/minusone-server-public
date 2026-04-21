@@ -1,0 +1,112 @@
+### ============================================================================
+### MinusOne Public API Tests (/api)
+### ============================================================================
+
+@baseUrl = http://localhost:8080/api
+
+# Seed Data Variables (Based on data.sql)
+@phone = 13800138000
+# "123456" in MD5
+@password = e10adc3949ba59abbe56e057f20f883e
+@testUserId = 1
+@testSongId = 1001
+@testPlaylistId = 10001
+@testThreadId = R_SO_4_1001
+
+### ============================================================================
+### 1. AUTHENTICATION
+### ============================================================================
+
+### Check Cellphone Existence
+GET {{baseUrl}}/cellphone/existence/check?cellphone={{phone}}&countrycode=86
+Accept: application/json
+
+### Login with Cellphone (Captures Cookie automatically)
+GET {{baseUrl}}/login/cellphone?phone={{phone}}&password={{password}}&countrycode=86
+Accept: application/json
+
+> {%
+    client.test("Login successful", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body.code === 200, "API code is not 200");
+    });
+%}
+
+### Register Anonymously
+GET {{baseUrl}}/register/anonimous?username=test_anon_user_123
+Accept: application/json
+
+### Logout
+GET {{baseUrl}}/logout
+Accept: application/json
+
+
+### ============================================================================
+### 2. USER
+### ============================================================================
+
+### Get User Detail
+GET {{baseUrl}}/v1/user/detail/{{testUserId}}
+Accept: application/json
+
+### Get User Playlists
+GET {{baseUrl}}/user/playlist?uid={{testUserId}}&limit=30&offset=0
+Accept: application/json
+
+
+### ============================================================================
+### 3. MUSIC & PLAYLISTS
+### ============================================================================
+
+### Get Playlist Detail (v4)
+GET {{baseUrl}}/playlist/v4/detail?id={{testPlaylistId}}&n=20&s=5
+Accept: application/json
+
+### Get Playlist Privileges
+GET {{baseUrl}}/playlist/privilege?id={{testPlaylistId}}&n=20
+Accept: application/json
+
+### Get Song Details (v3) - Uses JSON array in query param
+GET {{baseUrl}}/v3/song/detail?c=[{"id":{{testSongId}},"v":0}]
+Accept: application/json
+
+### Get Song Play URL
+GET {{baseUrl}}/song/enhance/player/url/v1?ids=[{{testSongId}}]&br=320000
+Accept: application/json
+
+### Get Song Lyrics
+GET {{baseUrl}}/song/lyric/v1?id={{testSongId}}
+Accept: application/json
+
+### Get Song Red (Heart) Count
+GET {{baseUrl}}/red/count?songId={{testSongId}}
+Accept: application/json
+
+### ============================================================================
+### 4. USER INTERACTIONS (Requires Login Cookie)
+### ============================================================================
+
+### Like a Song (Requires Auth)
+GET {{baseUrl}}/song/like?like=true&trackId={{testSongId}}
+Accept: application/json
+
+### Get Liked Songs Array (Requires Auth)
+GET {{baseUrl}}/song/like/get
+Accept: application/json
+
+### Get Subscribed Albums (Requires Auth)
+GET {{baseUrl}}/album/sublist?limit=25&offset=0
+Accept: application/json
+
+
+### ============================================================================
+### 5. RESOURCES & COMMENTS
+### ============================================================================
+
+### Get Comment Info List (resourceType 4 = Song)
+GET {{baseUrl}}/resource/commentInfo/list?resourceIds=[{{testSongId}}]&resourceType=4
+Accept: application/json
+
+### Get Resource Comments (using Thread ID)
+GET {{baseUrl}}/v2/resource/comments?threadId={{testThreadId}}
+Accept: application/json
