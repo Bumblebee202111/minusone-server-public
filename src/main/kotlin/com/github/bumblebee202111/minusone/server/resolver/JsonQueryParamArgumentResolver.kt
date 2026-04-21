@@ -26,7 +26,8 @@ class JsonQueryParamArgumentResolver(private val objectMapper: ObjectMapper) : H
         val paramName = annotation.value.ifBlank { parameter.parameterName!! }
 
         return webRequest.getParameter(paramName)?.let {
-            objectMapper.readValue(it, parameter.parameterType)
+            val javaType = objectMapper.typeFactory.constructType(parameter.genericParameterType)
+            objectMapper.readValue(it, javaType)
         }
     }
 }
